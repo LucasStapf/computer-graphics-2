@@ -72,7 +72,7 @@ textures = glGenTextures(qtd_texturas)
 
 
 caixa = obj.Object('caixa/caixa.obj', 'caixa/caixa2.jpg')
-caixa.set_coordinates(0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 15.0, 1.0, 1.0, 1.0)
+caixa.set_coordinates(0.0, 0.0, 0.0, -150.0, 10.0, 0.0, 15.0, 1.0, 1.0, 1.0)
 
 terreno = obj.Object('terreno/terreno2.obj', 'terreno/pedra.jpg')
 terreno.set_coordinates(0.0, 0.0, 0.0, 1.0, 0.0, -1.01, 0.0, 20.0, 20.0, 20.0)
