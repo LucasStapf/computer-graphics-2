@@ -72,9 +72,23 @@ textures = glGenTextures(qtd_texturas)
 
 
 caixa = obj.Object('caixa/caixa.obj', 'caixa/caixa2.jpg')
+caixa.set_coordinates(0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 15.0, 1.0, 1.0, 1.0)
+
 terreno = obj.Object('terreno/terreno2.obj', 'terreno/pedra.jpg')
+terreno.set_coordinates(0.0, 0.0, 0.0, 1.0, 0.0, -1.01, 0.0, 20.0, 20.0, 20.0)
+
 casa = obj.Object('casa/casa.obj', 'casa/casa.jpg')
+casa.set_coordinates(0.0, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0, 1.0, 1.0, 1.0)
+
 monstro = obj.Object('monstro/monstro.obj', 'monstro/monstro.jpg')
+monstro.set_coordinates(0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, 1.0, 1.0, 1.0)
+
+def rotacao_inc(self):
+    self.angle += 0.1
+    if(self.t_y < 10.0):
+        self.t_y += 0.005
+
+monstro.set_movement(rotacao_inc)
 
 lista_objetos = obj.ObjList(
         [
@@ -120,131 +134,6 @@ offset = ctypes.c_void_p(0)
 loc_texture_coord = glGetAttribLocation(program, "texture_coord")
 glEnableVertexAttribArray(loc_texture_coord)
 glVertexAttribPointer(loc_texture_coord, 2, GL_FLOAT, False, stride, offset)
-
-
-# ### Desenhando nossos modelos
-# * Cada modelo tem um Model para posicioná-los no mundo.
-# * É necessário saber qual a posição inicial e total de vértices de cada modelo.
-# * É necessário indicar qual o ID da textura do modelo.
-
-# In[ ]:
-
-
-def desenha_caixa():
-
-
-    # aplica a matriz model
-
-    # rotacao
-    angle = 0.0;
-    r_x = 0.0; r_y = 0.0; r_z = 1.0;
-
-    # translacao
-    t_x = 0.0; t_y = 0.0; t_z = 15.0;
-
-    # escala
-    s_x = 1.0; s_y = 1.0; s_z = 1.0;
-
-    mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
-    loc_model = glGetUniformLocation(program, "model")
-    glUniformMatrix4fv(loc_model, 1, GL_TRUE, mat_model)
-
-    #define id da textura do modelo
-    glBindTexture(GL_TEXTURE_2D, 0)
-
-
-    # desenha o modelo
-    glDrawArrays(GL_TRIANGLES, 0, 36) ## renderizando
-
-
-# In[ ]:
-
-
-def desenha_terreno():
-
-
-    # aplica a matriz model
-
-    # rotacao
-    angle = 0.0;
-    r_x = 0.0; r_y = 0.0; r_z = 1.0;
-
-    # translacao
-    t_x = 0.0; t_y = -1.01; t_z = 0.0;
-
-    # escala
-    s_x = 20.0; s_y = 20.0; s_z = 20.0;
-
-    mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
-    loc_model = glGetUniformLocation(program, "model")
-    glUniformMatrix4fv(loc_model, 1, GL_TRUE, mat_model)
-
-    #define id da textura do modelo
-    glBindTexture(GL_TEXTURE_2D, 1)
-
-
-    # desenha o modelo
-    glDrawArrays(GL_TRIANGLES, 36, 42-36) ## renderizando
-
-
-# In[ ]:
-
-
-def desenha_casa():
-
-
-    # aplica a matriz model
-
-    # rotacao
-    angle = 0.0;
-    r_x = 0.0; r_y = 0.0; r_z = 1.0;
-
-    # translacao
-    t_x = 0.0; t_y = -1.0; t_z = 0.0;
-
-    # escala
-    s_x = 1.0; s_y = 1.0; s_z = 1.0;
-
-    mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
-    loc_model = glGetUniformLocation(program, "model")
-    glUniformMatrix4fv(loc_model, 1, GL_TRUE, mat_model)
-
-    #define id da textura do modelo
-    glBindTexture(GL_TEXTURE_2D, 2)
-
-
-    # desenha o modelo
-    glDrawArrays(GL_TRIANGLES, 42, 1476-42) ## renderizando
-
-
-# In[ ]:
-
-
-def desenha_monstro(rotacao_inc):
-
-
-    # aplica a matriz model
-
-    # rotacao
-    angle = rotacao_inc;
-    r_x = 0.0; r_y = 1.0; r_z = 0.0;
-
-    # translacao
-    t_x = 0.0; t_y = -1.0; t_z = 0.0;
-
-    # escala
-    s_x = 1.0; s_y = 1.0; s_z = 1.0;
-
-    mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
-    loc_model = glGetUniformLocation(program, "model")
-    glUniformMatrix4fv(loc_model, 1, GL_TRUE, mat_model)
-
-    #define id da textura do modelo
-    glBindTexture(GL_TEXTURE_2D, 3)
-
-
-    # desenha o modelo
-    glDrawArrays(GL_TRIANGLES, 1476, 7584-1476) ## renderizando
 
 
 # ### Eventos para modificar a posição da câmera.
@@ -331,28 +220,6 @@ glfw.set_cursor_pos_callback(window, mouse_event)
 #
 # Teremos uma aula específica para entender o seu funcionamento.
 
-# In[ ]:
-
-
-def model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z):
-
-    angle = math.radians(angle)
-
-    matrix_transform = glm.mat4(1.0) # instanciando uma matriz identidade
-
-
-    # aplicando translacao
-    matrix_transform = glm.translate(matrix_transform, glm.vec3(t_x, t_y, t_z))
-
-    # aplicando rotacao
-    matrix_transform = glm.rotate(matrix_transform, angle, glm.vec3(r_x, r_y, r_z))
-
-    # aplicando escala
-    matrix_transform = glm.scale(matrix_transform, glm.vec3(s_x, s_y, s_z))
-
-    matrix_transform = np.array(matrix_transform)
-
-    return matrix_transform
 
 def view():
     global cameraPos, cameraFront, cameraUp
@@ -386,7 +253,7 @@ glfw.set_cursor_pos(window, lastX, lastY)
 glEnable(GL_DEPTH_TEST) ### importante para 3D
 
 
-rotacao_inc = 0
+
 while not glfw.window_should_close(window):
 
     glfw.poll_events()
@@ -403,13 +270,7 @@ while not glfw.window_should_close(window):
 
 
 
-    desenha_caixa()
-    desenha_terreno()
-    desenha_casa()
-
-    rotacao_inc += 0.1
-    desenha_monstro(rotacao_inc)
-
+    lista_objetos.draw_objects(program)
 
 
     mat_view = view()
