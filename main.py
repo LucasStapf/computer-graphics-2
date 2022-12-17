@@ -78,7 +78,7 @@ terreno = obj.Object('terreno/terreno2.obj', 'terreno/pedra.jpg')
 terreno.set_coordinates(0.0, 0.0, 0.0, 1.0, 0.0, -1.01, 0.0, 20.0, 20.0, 20.0)
 
 casa = obj.Object('casa/casa.obj', 'casa/casa.jpg')
-casa.set_coordinates(0.0, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0, 1.0, 1.0, 1.0)
+casa.set_coordinates(0.0, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0, 5.0, 5.0, 5.0)
 
 monstro = obj.Object('monstro/monstro.obj', 'monstro/monstro.jpg')
 monstro.set_coordinates(0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, 1.0, 1.0, 1.0)
@@ -90,15 +90,15 @@ def rotacao_inc(self):
 
 monstro.set_movement(rotacao_inc)
 
+
 lista_objetos = obj.ObjList(
         [
             caixa,
-            terreno,
             casa,
+            terreno,
             monstro
             ]
         )
-
 # Request a buffer slot from GPU
 buffer = glGenBuffers(2)
 
