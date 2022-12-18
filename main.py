@@ -119,10 +119,6 @@ textures = glGenTextures(qtd_texturas)
 ns_inc = 32
 
 
-bode = obj.Object('bode/bode.obj', 'bode/bode.jpg')
-bode.set_coordinates(0.0, 0.0, 0.0, -100.0, 10.0, 0.0, 15.0, 1.0, 1.0, 1.0)
-bode.set_light(0.1, 0.1, 0.9, ns_inc)
-
 caixa = obj.Object('caixa/caixa.obj', 'caixa/caixa2.jpg')
 caixa.set_coordinates(0.0, 0.0, 0.0, -150.0, 10.0, 0.0, 15.0, 1.0, 1.0, 1.0)
 caixa.set_light(0.1, 0.1, 0.9, ns_inc)
@@ -157,7 +153,7 @@ def rotacao_inc(self):
     if (self.t_y < 10.0):
         self.t_y += 0.005
 
-monstro.set_movement(rotacao_inc)
+#monstro.set_movement(rotacao_inc)
 
 
 def movimenta_luz(self):
@@ -168,7 +164,6 @@ luz.set_movement(movimenta_luz)
 
 lista_objetos = obj.ObjList(
         [
-            bode,
             caixa,
             casa,
             terreno,
@@ -215,8 +210,6 @@ glVertexAttribPointer(loc_texture_coord, 2, GL_FLOAT, False, stride, offset)
 #
 # * Usei as teclas A, S, D e W para movimentação no espaço tridimensional.
 # * Usei a posição do mouse para "direcionar" a câmera.
-
-# In[ ]:
 
 
 cameraPos = glm.vec3(0.0, 0.0, 1.0);
@@ -310,9 +303,6 @@ def projection():
 
 
 # ### Nesse momento, exibimos a janela.
-
-# In[ ]:
-
 
 glfw.show_window(window)
 glfw.set_cursor_pos(window, lastX, lastY)
