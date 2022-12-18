@@ -215,11 +215,53 @@ def mouse_event(window, xpos, ypos):
 glfw.set_key_callback(window,key_event)
 glfw.set_cursor_pos_callback(window, mouse_event)
 
+def desenha_luz(t_x, t_y, t_z):
+    
 
-# ### Matrizes Model, View e Projection
-#
-# Teremos uma aula específica para entender o seu funcionamento.
-
+    # aplica a matriz model
+    angle = 0.0
+    
+    r_x = 0.0; r_y = 0.0; r_z = 1.0;
+    
+    # translacao
+    #t_x = 0.0; t_y = 0.0; t_z = 0.0;
+    
+    # escala
+    s_x = 0.1; s_y = 0.1; s_z = 0.1;
+    
+    mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
+    loc_model = glGetUniformLocation(program, "model")
+    glUniformMatrix4fv(loc_model, 1, GL_TRUE, mat_model)
+       
+    
+    #### define parametros de ilumincao do modelo
+    ka = 1 # coeficiente de reflexao ambiente do modelo
+    kd = 1 # coeficiente de reflexao difusa do modelo
+    ks = 1 # coeficiente de reflexao especular do modelo
+    ns = 1000.0 # expoente de reflexao especular
+    
+    loc_ka = glGetUniformLocation(program, "ka") # recuperando localizacao da variavel ka na GPU
+    glUniform1f(loc_ka, ka) ### envia ka pra gpu
+    
+    loc_kd = glGetUniformLocation(program, "kd") # recuperando localizacao da variavel kd na GPU
+    glUniform1f(loc_kd, kd) ### envia kd pra gpu    
+    
+    loc_ks = glGetUniformLocation(program, "ks") # recuperando localizacao da variavel ks na GPU
+    glUniform1f(loc_ks, ks) ### envia ns pra gpu        
+    
+    loc_ns = glGetUniformLocation(program, "ns") # recuperando localizacao da variavel ns na GPU
+    glUniform1f(loc_ns, ns) ### envia ns pra gpu            
+    
+    loc_light_pos = glGetUniformLocation(program, "lightPos") # recuperando localizacao da variavel lightPos na GPU
+    glUniform3f(loc_light_pos, t_x, t_y, t_z) ### posicao da fonte de luz
+        
+    
+    #define id da textura do modelo
+    glBindTexture(GL_TEXTURE_2D, 1)
+    
+    
+    # desenha o modelo
+    glDrawArrays(GL_TRIANGLES, 36, 36) ## renderizando
 
 def view():
     global cameraPos, cameraFront, cameraUp
@@ -252,7 +294,8 @@ glfw.set_cursor_pos(window, lastX, lastY)
 
 glEnable(GL_DEPTH_TEST) ### importante para 3D
 
-
+ang = 0.1
+ns_inc = 32
 
 while not glfw.window_should_close(window):
 
@@ -271,7 +314,8 @@ while not glfw.window_should_close(window):
 
 
     lista_objetos.draw_objects(program)
-
+    ang += 0.005
+    desenha_luz(math.cos(ang)*0.5, math.sin(ang)*0.5, 3.0)   
 
     mat_view = view()
     loc_view = glGetUniformLocation(program, "view")
