@@ -48,20 +48,20 @@ class ObjList:
 
             loc_model = glGetUniformLocation(program, "model")
             glUniformMatrix4fv(loc_model, 1, GL_TRUE, mat_model)
-            
+
             loc_ka = glGetUniformLocation(program, "ka") # recuperando localizacao da variavel ka na GPU
             glUniform1f(loc_ka, obj.ka) ### envia ka pra gpu
-            
-            loc_kd = glGetUniformLocation(program, "kd") # recuperando localizacao da variavel kd na GPU
-            glUniform1f(loc_kd, obj.kd) ### envia kd pra gpu    
-            
-            loc_ks = glGetUniformLocation(program, "ks") # recuperando localizacao da variavel ks na GPU
-            glUniform1f(loc_ks, obj.ks) ### envia ks pra gpu        
-            
-            loc_ns = glGetUniformLocation(program, "ns") # recuperando localizacao da variavel ns na GPU
-            glUniform1f(loc_ns, obj.ns) ### envia ns pra gpu        
 
-    
+            loc_kd = glGetUniformLocation(program, "kd") # recuperando localizacao da variavel kd na GPU
+            glUniform1f(loc_kd, obj.kd) ### envia kd pra gpu
+
+            loc_ks = glGetUniformLocation(program, "ks") # recuperando localizacao da variavel ks na GPU
+            glUniform1f(loc_ks, obj.ks) ### envia ks pra gpu
+
+            loc_ns = glGetUniformLocation(program, "ns") # recuperando localizacao da variavel ns na GPU
+            glUniform1f(loc_ns, obj.ns) ### envia ns pra gpu
+
+
             #define id da textura do modelo
             glBindTexture(GL_TEXTURE_2D, index)
 
