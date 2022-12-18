@@ -16,27 +16,77 @@ glfw.set_input_mode(window, glfw.CURSOR, glfw.CURSOR_DISABLED)
 vertex_code = """
         attribute vec3 position;
         attribute vec2 texture_coord;
+        attribute vec3 normals;
+        
+       
         varying vec2 out_texture;
-
+        varying vec3 out_fragPos;
+        varying vec3 out_normal;
+                
         uniform mat4 model;
         uniform mat4 view;
-        uniform mat4 projection;
-
+        uniform mat4 projection;        
+        
         void main(){
             gl_Position = projection * view * model * vec4(position,1.0);
             out_texture = vec2(texture_coord);
+            out_fragPos = vec3(  model * vec4(position, 1.0));
+            out_normal = vec3( model *vec4(normals, 1.0));            
         }
         """
-fragment_code = """
-        uniform vec4 color;
-        varying vec2 out_texture;
-        uniform sampler2D samplerTexture;
 
+
+fragment_code = """
+        // parametro com a cor da(s) fonte(s) de iluminacao
+        uniform vec4 color;
+        uniform vec3 lightPos; // define coordenadas de posicao da luz
+        vec3 lightColor = vec3(1.0, 1.0, 1.0);
+        
+        // parametros da iluminacao ambiente e difusa
+        uniform float ka; // coeficiente de reflexao ambiente
+        uniform float kd; // coeficiente de reflexao difusa
+        
+        // parametros da iluminacao especular
+        uniform vec3 viewPos; // define coordenadas com a posicao da camera/observador
+        uniform float ks; // coeficiente de reflexao especular
+        uniform float ns; // expoente de reflexao especular
+        
+
+
+        // parametros recebidos do vertex shader
+        varying vec2 out_texture; // recebido do vertex shader
+        varying vec3 out_normal; // recebido do vertex shader
+        varying vec3 out_fragPos; // recebido do vertex shader
+        uniform sampler2D samplerTexture;
+        
+        
+        
         void main(){
+        
+            // calculando reflexao ambiente
+            vec3 ambient = ka * lightColor;             
+        
+            // calculando reflexao difusa
+            vec3 norm = normalize(out_normal); // normaliza vetores perpendiculares
+            vec3 lightDir = normalize(lightPos - out_fragPos); // direcao da luz
+            float diff = max(dot(norm, lightDir), 0.0); // verifica limite angular (entre 0 e 90)
+            vec3 diffuse = kd * diff * lightColor; // iluminacao difusa
+            
+            // calculando reflexao especular
+            vec3 viewDir = normalize(viewPos - out_fragPos); // direcao do observador/camera
+            vec3 reflectDir = normalize(reflect(-lightDir, norm)); // direcao da reflexao
+            float spec = pow(max(dot(viewDir, reflectDir), 0.0), ns);
+            vec3 specular = ks * spec * lightColor;             
+            
+            // aplicando o modelo de iluminacao
             vec4 texture = texture2D(samplerTexture, out_texture);
-            gl_FragColor = texture;
+            vec4 result = vec4((ambient + diffuse + specular),1.0) * texture; // aplica iluminacao
+            gl_FragColor = result;
+
         }
         """
+
+    
 program = glCreateProgram()
 vertex = glCreateShader(GL_VERTEX_SHADER)
 fragment = glCreateShader(GL_FRAGMENT_SHADER)
@@ -70,11 +120,8 @@ glEnable(GL_TEXTURE_2D)
 qtd_texturas = 10
 textures = glGenTextures(qtd_texturas)
 
-<<<<<<< HEAD
 ns_inc = 32
 
-=======
->>>>>>> 56f23d68a2e1a1c28e2f2cfea491f8763055644c
 caixa = obj.Object('caixa/caixa.obj', 'caixa/caixa2.jpg')
 caixa.set_coordinates(0.0, 0.0, 0.0, -150.0, 10.0, 0.0, 15.0, 1.0, 1.0, 1.0)
 
@@ -110,7 +157,6 @@ def rotacao_inc(self):
 
 monstro.set_movement(rotacao_inc)
 
-<<<<<<< HEAD
 def movimenta_luz(self, ang):
      self.t_x = math.cos(ang)*0.5
      self.t_y = math.sin(ang)*0.5
@@ -127,18 +173,6 @@ lista_objetos = obj.ObjList(
             luz
             ]
         )
-=======
-lista_objetos = obj.ObjList(
-    [
-        caixa,
-        casa,
-        terreno,
-        monstro,
-        cadeira,
-        bau
-    ]
-)
->>>>>>> 56f23d68a2e1a1c28e2f2cfea491f8763055644c
 # Request a buffer slot from GPU
 buffer = glGenBuffers(2)
 
@@ -283,14 +317,10 @@ glfw.set_cursor_pos(window, lastX, lastY)
 # In[ ]:
 
 
-<<<<<<< HEAD
 glEnable(GL_DEPTH_TEST) ### importante para 3D
 
 ang = 0.1
 ns_inc = 32
-=======
-glEnable(GL_DEPTH_TEST)  ### importante para 3D
->>>>>>> 56f23d68a2e1a1c28e2f2cfea491f8763055644c
 
 while not glfw.window_should_close(window):
 
@@ -300,7 +330,6 @@ while not glfw.window_should_close(window):
 
     glClearColor(1.0, 1.0, 1.0, 1.0)
 
-<<<<<<< HEAD
     if polygonal_mode==True:
         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE)
     if polygonal_mode==False:
@@ -310,14 +339,6 @@ while not glfw.window_should_close(window):
     lista_objetos.draw_objects(program)
     ang += 0.005
     luz.set_movement(movimenta_luz(ang))
-=======
-    if polygonal_mode == True:
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
-    if polygonal_mode == False:
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
-
-    lista_objetos.draw_objects(program)
->>>>>>> 56f23d68a2e1a1c28e2f2cfea491f8763055644c
 
     mat_view = view()
     loc_view = glGetUniformLocation(program, "view")
