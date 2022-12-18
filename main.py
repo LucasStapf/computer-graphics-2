@@ -6,13 +6,13 @@ import glm
 import math
 from PIL import Image
 
-
 glfw.init()
 glfw.window_hint(glfw.VISIBLE, glfw.FALSE);
 altura = 1600
 largura = 1200
 window = glfw.create_window(largura, altura, "Malhas e Texturas", None, None)
 glfw.make_context_current(window)
+glfw.set_input_mode(window, glfw.CURSOR, glfw.CURSOR_DISABLED)
 vertex_code = """
         attribute vec3 position;
         attribute vec2 texture_coord;
@@ -37,8 +37,8 @@ fragment_code = """
             gl_FragColor = texture;
         }
         """
-program  = glCreateProgram()
-vertex   = glCreateShader(GL_VERTEX_SHADER)
+program = glCreateProgram()
+vertex = glCreateShader(GL_VERTEX_SHADER)
 fragment = glCreateShader(GL_FRAGMENT_SHADER)
 
 glShaderSource(vertex, vertex_code)
@@ -70,8 +70,11 @@ glEnable(GL_TEXTURE_2D)
 qtd_texturas = 10
 textures = glGenTextures(qtd_texturas)
 
+<<<<<<< HEAD
 ns_inc = 32
 
+=======
+>>>>>>> 56f23d68a2e1a1c28e2f2cfea491f8763055644c
 caixa = obj.Object('caixa/caixa.obj', 'caixa/caixa2.jpg')
 caixa.set_coordinates(0.0, 0.0, 0.0, -150.0, 10.0, 0.0, 15.0, 1.0, 1.0, 1.0)
 
@@ -98,13 +101,16 @@ luz = obj.Object()
 luz.set_coordinate(0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1)
 casa.set_light(1.0, 1.0, 1.0, 1000.0)
 
+
 def rotacao_inc(self):
     self.angle += 0.1
-    if(self.t_y < 10.0):
+    if (self.t_y < 10.0):
         self.t_y += 0.005
+
 
 monstro.set_movement(rotacao_inc)
 
+<<<<<<< HEAD
 def movimenta_luz(self, ang):
      self.t_x = math.cos(ang)*0.5
      self.t_y = math.sin(ang)*0.5
@@ -121,15 +127,25 @@ lista_objetos = obj.ObjList(
             luz
             ]
         )
+=======
+lista_objetos = obj.ObjList(
+    [
+        caixa,
+        casa,
+        terreno,
+        monstro,
+        cadeira,
+        bau
+    ]
+)
+>>>>>>> 56f23d68a2e1a1c28e2f2cfea491f8763055644c
 # Request a buffer slot from GPU
 buffer = glGenBuffers(2)
-
 
 # ###  Enviando coordenadas de vértices para a GPU
 
 vertices = np.zeros(len(lista_objetos.vertices_list), [("position", np.float32, 3)])
 vertices['position'] = lista_objetos.vertices_list
-
 
 # Upload data
 glBindBuffer(GL_ARRAY_BUFFER, buffer[0])
@@ -140,13 +156,11 @@ loc_vertices = glGetAttribLocation(program, "position")
 glEnableVertexAttribArray(loc_vertices)
 glVertexAttribPointer(loc_vertices, 3, GL_FLOAT, False, stride, offset)
 
-
 # ###  Enviando coordenadas de textura para a GPU
 
 
-textures = np.zeros(len(lista_objetos.tex_coord_list), [("position", np.float32, 2)]) # duas coordenadas
+textures = np.zeros(len(lista_objetos.tex_coord_list), [("position", np.float32, 2)])  # duas coordenadas
 textures['position'] = lista_objetos.tex_coord_list
-
 
 # Upload data
 glBindBuffer(GL_ARRAY_BUFFER, buffer[1])
@@ -157,7 +171,6 @@ loc_texture_coord = glGetAttribLocation(program, "texture_coord")
 glEnableVertexAttribArray(loc_texture_coord)
 glVertexAttribPointer(loc_texture_coord, 2, GL_FLOAT, False, stride, offset)
 
-
 # ### Eventos para modificar a posição da câmera.
 #
 # * Usei as teclas A, S, D e W para movimentação no espaço tridimensional.
@@ -166,42 +179,48 @@ glVertexAttribPointer(loc_texture_coord, 2, GL_FLOAT, False, stride, offset)
 # In[ ]:
 
 
-cameraPos   = glm.vec3(0.0,  0.0,  1.0);
-cameraFront = glm.vec3(0.0,  0.0, -1.0);
-cameraUp    = glm.vec3(0.0,  1.0,  0.0);
-
+cameraPos = glm.vec3(0.0, 0.0, 1.0);
+cameraFront = glm.vec3(0.0, 0.0, -1.0);
+cameraUp = glm.vec3(0.0, 1.0, 0.0);
 
 polygonal_mode = False
 
-def key_event(window,key,scancode,action,mods):
+
+def key_event(window, key, scancode, action, mods):
     global cameraPos, cameraFront, cameraUp, polygonal_mode
 
     cameraSpeed = 0.2
-    if key == 87 and (action==1 or action==2): # tecla W
+    if key == glfw.KEY_W and (action == 1 or action == 2):  # tecla W
         cameraPos += cameraSpeed * cameraFront
 
-    if key == 83 and (action==1 or action==2): # tecla S
+    if key == glfw.KEY_S and (action == 1 or action == 2):  # tecla S
         cameraPos -= cameraSpeed * cameraFront
 
-    if key == 65 and (action==1 or action==2): # tecla A
+    if key == glfw.KEY_A and (action == 1 or action == 2):  # tecla A
         cameraPos -= glm.normalize(glm.cross(cameraFront, cameraUp)) * cameraSpeed
 
-    if key == 68 and (action==1 or action==2): # tecla D
+    if key == glfw.KEY_D and (action == 1 or action == 2):  # tecla D
         cameraPos += glm.normalize(glm.cross(cameraFront, cameraUp)) * cameraSpeed
 
-    if key == 80 and action==1 and polygonal_mode==True:
-        polygonal_mode=False
-    else:
-        if key == 80 and action==1 and polygonal_mode==False:
-            polygonal_mode=True
+    if key == glfw.KEY_SPACE and (action == 1 or action == 2):
+        cameraPos += cameraSpeed * cameraUp
 
+    if key == glfw.KEY_Z and (action == 1 or action == 2):
+        cameraPos -= cameraSpeed * cameraUp
+
+    if key == 80 and action == 1 and polygonal_mode == True:
+        polygonal_mode = False
+    else:
+        if key == 80 and action == 1 and polygonal_mode == False:
+            polygonal_mode = True
 
 
 firstMouse = True
 yaw = -90.0
 pitch = 0.0
-lastX =  largura/2
-lastY =  altura/2
+lastX = largura / 2
+lastY = altura / 2
+
 
 def mouse_event(window, xpos, ypos):
     global firstMouse, cameraFront, yaw, pitch, lastX, lastY
@@ -215,13 +234,12 @@ def mouse_event(window, xpos, ypos):
     lastX = xpos
     lastY = ypos
 
-    sensitivity = 0.3
+    sensitivity = 0.08
     xoffset *= sensitivity
     yoffset *= sensitivity
 
-    yaw += xoffset;
-    pitch += yoffset;
-
+    yaw += xoffset
+    pitch += yoffset
 
     if pitch >= 90.0: pitch = 90.0
     if pitch <= -90.0: pitch = -90.0
@@ -233,8 +251,7 @@ def mouse_event(window, xpos, ypos):
     cameraFront = glm.normalize(front)
 
 
-
-glfw.set_key_callback(window,key_event)
+glfw.set_key_callback(window, key_event)
 glfw.set_cursor_pos_callback(window, mouse_event)
 
 def view():
@@ -243,10 +260,11 @@ def view():
     mat_view = np.array(mat_view)
     return mat_view
 
+
 def projection():
     global altura, largura
     # perspective parameters: fovy, aspect, near, far
-    mat_projection = glm.perspective(glm.radians(45.0), largura/altura, 0.1, 1000.0)
+    mat_projection = glm.perspective(glm.radians(45.0), largura / altura, 0.1, 1000.0)
     mat_projection = np.array(mat_projection)
     return mat_projection
 
@@ -259,27 +277,30 @@ def projection():
 glfw.show_window(window)
 glfw.set_cursor_pos(window, lastX, lastY)
 
-
 # ### Loop principal da janela.
 # Enquanto a janela não for fechada, esse laço será executado. É neste espaço que trabalhamos com algumas interações com a OpenGL.
 
 # In[ ]:
 
 
+<<<<<<< HEAD
 glEnable(GL_DEPTH_TEST) ### importante para 3D
 
 ang = 0.1
 ns_inc = 32
+=======
+glEnable(GL_DEPTH_TEST)  ### importante para 3D
+>>>>>>> 56f23d68a2e1a1c28e2f2cfea491f8763055644c
 
 while not glfw.window_should_close(window):
 
     glfw.poll_events()
 
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
     glClearColor(1.0, 1.0, 1.0, 1.0)
 
+<<<<<<< HEAD
     if polygonal_mode==True:
         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE)
     if polygonal_mode==False:
@@ -289,6 +310,14 @@ while not glfw.window_should_close(window):
     lista_objetos.draw_objects(program)
     ang += 0.005
     luz.set_movement(movimenta_luz(ang))
+=======
+    if polygonal_mode == True:
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
+    if polygonal_mode == False:
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
+
+    lista_objetos.draw_objects(program)
+>>>>>>> 56f23d68a2e1a1c28e2f2cfea491f8763055644c
 
     mat_view = view()
     loc_view = glGetUniformLocation(program, "view")
@@ -298,13 +327,9 @@ while not glfw.window_should_close(window):
     loc_projection = glGetUniformLocation(program, "projection")
     glUniformMatrix4fv(loc_projection, 1, GL_TRUE, mat_projection)
 
-
-
-
     glfw.swap_buffers(window)
 
 glfw.terminate()
-
 
 # # Exercício
 #
