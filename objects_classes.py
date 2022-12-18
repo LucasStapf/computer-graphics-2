@@ -42,34 +42,26 @@ class ObjList:
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, obj.img_width, obj.img_height, 0, GL_RGB, GL_UNSIGNED_BYTE, obj.image_data)
 
     def draw_objects(self, program):
-        ns_inc = 32
         index = 0
         for obj in self.objects:
             mat_model = obj.draw()
 
             loc_model = glGetUniformLocation(program, "model")
             glUniformMatrix4fv(loc_model, 1, GL_TRUE, mat_model)
-
-            #### define parametros de ilumincao do modelo
-            ka = 0.1 # coeficiente de reflexao ambiente do modelo
-            kd = 0.1 # coeficiente de reflexao difusa do modelo
-            ks = 0.9 # coeficiente de reflexao especular do modelo
-            ns = ns_inc # expoente de reflexao especular
             
             loc_ka = glGetUniformLocation(program, "ka") # recuperando localizacao da variavel ka na GPU
-            glUniform1f(loc_ka, ka) ### envia ka pra gpu
+            glUniform1f(loc_ka, obj.ka) ### envia ka pra gpu
             
             loc_kd = glGetUniformLocation(program, "kd") # recuperando localizacao da variavel kd na GPU
-            glUniform1f(loc_kd, kd) ### envia kd pra gpu    
+            glUniform1f(loc_kd, obj.kd) ### envia kd pra gpu    
             
             loc_ks = glGetUniformLocation(program, "ks") # recuperando localizacao da variavel ks na GPU
-            glUniform1f(loc_ks, ks) ### envia ks pra gpu        
+            glUniform1f(loc_ks, obj.ks) ### envia ks pra gpu        
             
             loc_ns = glGetUniformLocation(program, "ns") # recuperando localizacao da variavel ns na GPU
-            glUniform1f(loc_ns, ns) ### envia ns pra gpu        
+            glUniform1f(loc_ns, obj.ns) ### envia ns pra gpu        
 
     
-
             #define id da textura do modelo
             glBindTexture(GL_TEXTURE_2D, index)
 
@@ -150,6 +142,12 @@ class Object:
     def set_movement(self, movement):
         self.movement = movement
 
+    def set_light(self, ka, kd, ks, ns):
+        self.ka = ka
+        self.kd = kd
+        self.ks = ks
+        self.ns = ns
+
     def draw(self):
         if(self.movement != None):
             self.movement(self)
@@ -157,6 +155,7 @@ class Object:
         angle = math.radians(self.angle)
 
         matrix_transform = glm.mat4(1.0) # instanciando uma matriz identidade
+
 
 
         # aplicando translacao

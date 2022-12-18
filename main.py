@@ -70,6 +70,7 @@ glEnable(GL_TEXTURE_2D)
 qtd_texturas = 10
 textures = glGenTextures(qtd_texturas)
 
+ns_inc = 32
 
 caixa = obj.Object('caixa/caixa.obj', 'caixa/caixa2.jpg')
 caixa.set_coordinates(0.0, 0.0, 0.0, -150.0, 10.0, 0.0, 15.0, 1.0, 1.0, 1.0)
@@ -79,15 +80,23 @@ terreno.set_coordinates(0.0, 0.0, 0.0, 1.0, 0.0, -1.01, 0.0, 20.0, 20.0, 20.0)
 
 casa = obj.Object('casa/casa.obj', 'casa/casa.jpg')
 casa.set_coordinates(0.0, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0, 5.0, 5.0, 5.0)
+casa.set_light(0.1, 0.1, 0.9, ns_inc)
 
 monstro = obj.Object('monstro/monstro.obj', 'monstro/monstro.jpg')
 monstro.set_coordinates(0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, 1.0, 1.0, 1.0)
+casa.set_light(0.1, 0.1, 0.9, ns_inc)
 
 cadeira = obj.Object('cadeira/cadeira.obj', 'cadeira/cadeira.jpg')
 cadeira.set_coordinates(0.0, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0, 1.0, 1.0, 1.0)
+casa.set_light(0.1, 0.1, 0.9, ns_inc)
 
 bau = obj.Object('bau/bau.obj', 'bau/bau.png')
 bau.set_coordinates(0.0, 0.0, 0.0, 1.0, -12.5, -1.0, 1.0, 2.5, 2.5, 2.5)
+casa.set_light(0.1, 0.1, 0.9, ns_inc)
+
+luz = obj.Object()
+luz.set_coordinate(0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1)
+casa.set_light(1.0, 1.0, 1.0, 1000.0)
 
 def rotacao_inc(self):
     self.angle += 0.1
@@ -96,6 +105,10 @@ def rotacao_inc(self):
 
 monstro.set_movement(rotacao_inc)
 
+def movimenta_luz(self, ang):
+     self.t_x = math.cos(ang)*0.5
+     self.t_y = math.sin(ang)*0.5
+     self.t_z = 3.0
 
 lista_objetos = obj.ObjList(
         [
@@ -104,7 +117,8 @@ lista_objetos = obj.ObjList(
             terreno,
             monstro,
             cadeira,
-            bau
+            bau, 
+            luz
             ]
         )
 # Request a buffer slot from GPU
@@ -223,54 +237,6 @@ def mouse_event(window, xpos, ypos):
 glfw.set_key_callback(window,key_event)
 glfw.set_cursor_pos_callback(window, mouse_event)
 
-def desenha_luz(t_x, t_y, t_z):
-    
-
-    # aplica a matriz model
-    angle = 0.0
-    
-    r_x = 0.0; r_y = 0.0; r_z = 1.0;
-    
-    # translacao
-    #t_x = 0.0; t_y = 0.0; t_z = 0.0;
-    
-    # escala
-    s_x = 0.1; s_y = 0.1; s_z = 0.1;
-    
-    mat_model = model(angle, r_x, r_y, r_z, t_x, t_y, t_z, s_x, s_y, s_z)
-    loc_model = glGetUniformLocation(program, "model")
-    glUniformMatrix4fv(loc_model, 1, GL_TRUE, mat_model)
-       
-    
-    #### define parametros de ilumincao do modelo
-    ka = 1 # coeficiente de reflexao ambiente do modelo
-    kd = 1 # coeficiente de reflexao difusa do modelo
-    ks = 1 # coeficiente de reflexao especular do modelo
-    ns = 1000.0 # expoente de reflexao especular
-    
-    loc_ka = glGetUniformLocation(program, "ka") # recuperando localizacao da variavel ka na GPU
-    glUniform1f(loc_ka, ka) ### envia ka pra gpu
-    
-    loc_kd = glGetUniformLocation(program, "kd") # recuperando localizacao da variavel kd na GPU
-    glUniform1f(loc_kd, kd) ### envia kd pra gpu    
-    
-    loc_ks = glGetUniformLocation(program, "ks") # recuperando localizacao da variavel ks na GPU
-    glUniform1f(loc_ks, ks) ### envia ns pra gpu        
-    
-    loc_ns = glGetUniformLocation(program, "ns") # recuperando localizacao da variavel ns na GPU
-    glUniform1f(loc_ns, ns) ### envia ns pra gpu            
-    
-    loc_light_pos = glGetUniformLocation(program, "lightPos") # recuperando localizacao da variavel lightPos na GPU
-    glUniform3f(loc_light_pos, t_x, t_y, t_z) ### posicao da fonte de luz
-        
-    
-    #define id da textura do modelo
-    glBindTexture(GL_TEXTURE_2D, 1)
-    
-    
-    # desenha o modelo
-    glDrawArrays(GL_TRIANGLES, 36, 36) ## renderizando
-
 def view():
     global cameraPos, cameraFront, cameraUp
     mat_view = glm.lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
@@ -320,10 +286,9 @@ while not glfw.window_should_close(window):
         glPolygonMode(GL_FRONT_AND_BACK,GL_FILL)
 
 
-
     lista_objetos.draw_objects(program)
     ang += 0.005
-    desenha_luz(math.cos(ang)*0.5, math.sin(ang)*0.5, 3.0)   
+    luz.set_movement(movimenta_luz(ang))
 
     mat_view = view()
     loc_view = glGetUniformLocation(program, "view")
