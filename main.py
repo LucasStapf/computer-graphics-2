@@ -122,6 +122,11 @@ textures = glGenTextures(qtd_texturas)
 
 ns_inc = 32
 
+
+bode = obj.Object('bode/bode.obj', 'bode/bode.jpg')
+bode.set_coordinates(0.0, 0.0, 0.0, -100.0, 10.0, 0.0, 15.0, 1.0, 1.0, 1.0)
+bode.set_light(0.1, 0.1, 0.9, ns_inc)
+
 caixa = obj.Object('caixa/caixa.obj', 'caixa/caixa2.jpg')
 caixa.set_coordinates(0.0, 0.0, 0.0, -150.0, 10.0, 0.0, 15.0, 1.0, 1.0, 1.0)
 
@@ -164,6 +169,7 @@ def movimenta_luz(self, ang):
 
 lista_objetos = obj.ObjList(
         [
+            bode,
             caixa,
             casa,
             terreno,
