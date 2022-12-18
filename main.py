@@ -17,76 +17,72 @@ vertex_code = """
         attribute vec3 position;
         attribute vec2 texture_coord;
         attribute vec3 normals;
-        
-       
+
         varying vec2 out_texture;
         varying vec3 out_fragPos;
         varying vec3 out_normal;
-                
+
         uniform mat4 model;
         uniform mat4 view;
-        uniform mat4 projection;        
-        
+        uniform mat4 projection;
+
         void main(){
             gl_Position = projection * view * model * vec4(position,1.0);
             out_texture = vec2(texture_coord);
             out_fragPos = vec3(  model * vec4(position, 1.0));
-            out_normal = vec3( model *vec4(normals, 1.0));            
+            out_normal = vec3( model *vec4(normals, 1.0));
         }
         """
 
 
 fragment_code = """
         // parametro com a cor da(s) fonte(s) de iluminacao
-        uniform vec4 color;
+
         uniform vec3 lightPos; // define coordenadas de posicao da luz
         vec3 lightColor = vec3(1.0, 1.0, 1.0);
-        
+
         // parametros da iluminacao ambiente e difusa
         uniform float ka; // coeficiente de reflexao ambiente
         uniform float kd; // coeficiente de reflexao difusa
-        
+
         // parametros da iluminacao especular
         uniform vec3 viewPos; // define coordenadas com a posicao da camera/observador
         uniform float ks; // coeficiente de reflexao especular
         uniform float ns; // expoente de reflexao especular
-        
 
-
-        // parametros recebidos do vertex shader
-        varying vec2 out_texture; // recebido do vertex shader
+        uniform vec4 color;
+        varying vec2 out_texture;
         varying vec3 out_normal; // recebido do vertex shader
         varying vec3 out_fragPos; // recebido do vertex shader
         uniform sampler2D samplerTexture;
-        
-        
-        
+
+
+
         void main(){
-        
+
             // calculando reflexao ambiente
-            vec3 ambient = ka * lightColor;             
-        
-            // calculando reflexao difusa
+            vec3 ambient = ka * lightColor;
+
             vec3 norm = normalize(out_normal); // normaliza vetores perpendiculares
             vec3 lightDir = normalize(lightPos - out_fragPos); // direcao da luz
             float diff = max(dot(norm, lightDir), 0.0); // verifica limite angular (entre 0 e 90)
             vec3 diffuse = kd * diff * lightColor; // iluminacao difusa
-            
+
             // calculando reflexao especular
             vec3 viewDir = normalize(viewPos - out_fragPos); // direcao do observador/camera
             vec3 reflectDir = normalize(reflect(-lightDir, norm)); // direcao da reflexao
             float spec = pow(max(dot(viewDir, reflectDir), 0.0), ns);
-            vec3 specular = ks * spec * lightColor;             
-            
-            // aplicando o modelo de iluminacao
+
+            vec3 specular = ks * spec * lightColor;
+
+
             vec4 texture = texture2D(samplerTexture, out_texture);
             vec4 result = vec4((ambient + diffuse + specular),1.0) * texture; // aplica iluminacao
             gl_FragColor = result;
-
         }
         """
 
-    
+
 program = glCreateProgram()
 vertex = glCreateShader(GL_VERTEX_SHADER)
 fragment = glCreateShader(GL_FRAGMENT_SHADER)
@@ -129,9 +125,11 @@ bode.set_light(0.1, 0.1, 0.9, ns_inc)
 
 caixa = obj.Object('caixa/caixa.obj', 'caixa/caixa2.jpg')
 caixa.set_coordinates(0.0, 0.0, 0.0, -150.0, 10.0, 0.0, 15.0, 1.0, 1.0, 1.0)
+caixa.set_light(0.1, 0.1, 0.9, ns_inc)
 
 terreno = obj.Object('terreno/terreno2.obj', 'terreno/pedra.jpg')
 terreno.set_coordinates(0.0, 0.0, 0.0, 1.0, 0.0, -1.01, 0.0, 20.0, 20.0, 20.0)
+terreno.set_light(0.1, 0.1, 0.9, ns_inc)
 
 casa = obj.Object('casa/casa.obj', 'casa/casa.jpg')
 casa.set_coordinates(0.0, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0, 5.0, 5.0, 5.0)
@@ -139,19 +137,19 @@ casa.set_light(0.1, 0.1, 0.9, ns_inc)
 
 monstro = obj.Object('monstro/monstro.obj', 'monstro/monstro.jpg')
 monstro.set_coordinates(0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, 1.0, 1.0, 1.0)
-casa.set_light(0.1, 0.1, 0.9, ns_inc)
+monstro.set_light(0.1, 0.1, 0.9, ns_inc)
 
 cadeira = obj.Object('cadeira/cadeira.obj', 'cadeira/cadeira.jpg')
 cadeira.set_coordinates(0.0, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0, 1.0, 1.0, 1.0)
-casa.set_light(0.1, 0.1, 0.9, ns_inc)
+cadeira.set_light(0.1, 0.1, 0.9, ns_inc)
 
 bau = obj.Object('bau/bau.obj', 'bau/bau.png')
 bau.set_coordinates(0.0, 0.0, 0.0, 1.0, -12.5, -1.0, 1.0, 2.5, 2.5, 2.5)
-casa.set_light(0.1, 0.1, 0.9, ns_inc)
+bau.set_light(0.1, 0.1, 0.9, ns_inc)
 
-luz = obj.Object()
-luz.set_coordinate(0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1)
-casa.set_light(1.0, 1.0, 1.0, 1000.0)
+luz = obj.Object('luz/luz.obj', 'luz/luz.png')
+luz.set_coordinates(0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1)
+luz.set_light(1.0, 1.0, 1.0, 1000.0)
 
 
 def rotacao_inc(self):
@@ -159,13 +157,14 @@ def rotacao_inc(self):
     if (self.t_y < 10.0):
         self.t_y += 0.005
 
-
 monstro.set_movement(rotacao_inc)
 
-def movimenta_luz(self, ang):
-     self.t_x = math.cos(ang)*0.5
-     self.t_y = math.sin(ang)*0.5
-     self.t_z = 3.0
+
+def movimenta_luz(self):
+    if (self.t_y < 10.0):
+        self.t_y += 0.005
+
+luz.set_movement(movimenta_luz)
 
 lista_objetos = obj.ObjList(
         [
@@ -175,10 +174,11 @@ lista_objetos = obj.ObjList(
             terreno,
             monstro,
             cadeira,
-            bau, 
+            bau,
             luz
             ]
         )
+
 # Request a buffer slot from GPU
 buffer = glGenBuffers(2)
 
@@ -320,8 +320,6 @@ glfw.set_cursor_pos(window, lastX, lastY)
 # ### Loop principal da janela.
 # Enquanto a janela não for fechada, esse laço será executado. É neste espaço que trabalhamos com algumas interações com a OpenGL.
 
-# In[ ]:
-
 
 glEnable(GL_DEPTH_TEST) ### importante para 3D
 
@@ -343,8 +341,6 @@ while not glfw.window_should_close(window):
 
 
     lista_objetos.draw_objects(program)
-    ang += 0.005
-    luz.set_movement(movimenta_luz(ang))
 
     mat_view = view()
     loc_view = glGetUniformLocation(program, "view")
@@ -358,8 +354,3 @@ while not glfw.window_should_close(window):
 
 glfw.terminate()
 
-# # Exercício
-#
-# * Adicione mais 2 modelos no cenário com suas respectivas texturas. Procure em repositórios abertos/gratuitos por modelos no formato Wavefront (extensão .obj). Verifique se o conteúdo das faces do modelo é baseado em triângulos. Verifique se o modelo acompanha alguma imagem (.jpg, png, etc) com a textura. Evite modelos compostos por múltiplos objetos/texturas.
-#
-# * Coloque um cubo para "encapsular" todo o seu cenário. A face inferior do cubo será seu terreno. A face superior será o céu. As faces laterais serão horizontes. Crie um único arquivo de textura (imagem png ou jpg) com todas as faces. No arquivo .obj do modelo, define as coordenadas de textura para cada triângulo.
