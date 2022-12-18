@@ -83,6 +83,12 @@ casa.set_coordinates(0.0, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0, 5.0, 5.0, 5.0)
 monstro = obj.Object('monstro/monstro.obj', 'monstro/monstro.jpg')
 monstro.set_coordinates(0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, 1.0, 1.0, 1.0)
 
+cadeira = obj.Object('cadeira/cadeira.obj', 'cadeira/cadeira.jpg')
+cadeira.set_coordinates(0.0, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0, 1.0, 1.0, 1.0)
+
+bau = obj.Object('bau/bau.obj', 'bau/bau.png')
+bau.set_coordinates(0.0, 0.0, 0.0, 1.0, -12.5, -1.0, 1.0, 2.5, 2.5, 2.5)
+
 def rotacao_inc(self):
     self.angle += 0.1
     if(self.t_y < 10.0):
@@ -96,7 +102,9 @@ lista_objetos = obj.ObjList(
             caixa,
             casa,
             terreno,
-            monstro
+            monstro,
+            cadeira,
+            bau
             ]
         )
 # Request a buffer slot from GPU
