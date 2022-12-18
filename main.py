@@ -3,6 +3,7 @@ import glfw
 from OpenGL.GL import *
 import numpy as np
 import glm
+import copy
 import math
 from PIL import Image
 
@@ -218,7 +219,10 @@ glVertexAttribPointer(loc_texture_coord, 2, GL_FLOAT, False, stride, offset)
 # In[ ]:
 
 
-cameraPos = glm.vec3(0.0, 0.0, 1.0);
+yMin = 1.0
+yMax = 50.0
+
+cameraPos = glm.vec3(0.0, yMin, 1.0);
 cameraFront = glm.vec3(0.0, 0.0, -1.0);
 cameraUp = glm.vec3(0.0, 1.0, 0.0);
 
@@ -228,30 +232,39 @@ polygonal_mode = False
 def key_event(window, key, scancode, action, mods):
     global cameraPos, cameraFront, cameraUp, polygonal_mode
 
+    temp_camera_pos = copy.copy(cameraPos)
+    temp_camera_front = copy.copy(cameraFront)
+    temp_camera_up = copy.copy(cameraUp)
+
     cameraSpeed = 0.2
     if key == glfw.KEY_W and (action == 1 or action == 2):  # tecla W
-        cameraPos += cameraSpeed * cameraFront
+        temp_camera_pos += cameraSpeed * temp_camera_front
 
     if key == glfw.KEY_S and (action == 1 or action == 2):  # tecla S
-        cameraPos -= cameraSpeed * cameraFront
+        temp_camera_pos -= cameraSpeed * temp_camera_front
 
     if key == glfw.KEY_A and (action == 1 or action == 2):  # tecla A
-        cameraPos -= glm.normalize(glm.cross(cameraFront, cameraUp)) * cameraSpeed
+        temp_camera_pos -= glm.normalize(glm.cross(temp_camera_front, temp_camera_up)) * cameraSpeed
 
     if key == glfw.KEY_D and (action == 1 or action == 2):  # tecla D
-        cameraPos += glm.normalize(glm.cross(cameraFront, cameraUp)) * cameraSpeed
+        temp_camera_pos += glm.normalize(glm.cross(temp_camera_front, temp_camera_up)) * cameraSpeed
 
     if key == glfw.KEY_SPACE and (action == 1 or action == 2):
-        cameraPos += cameraSpeed * cameraUp
+        temp_camera_pos += cameraSpeed * temp_camera_up
 
     if key == glfw.KEY_Z and (action == 1 or action == 2):
-        cameraPos -= cameraSpeed * cameraUp
+        temp_camera_pos -= cameraSpeed * temp_camera_up
 
     if key == 80 and action == 1 and polygonal_mode == True:
         polygonal_mode = False
     else:
         if key == 80 and action == 1 and polygonal_mode == False:
             polygonal_mode = True
+
+    if yMin < temp_camera_pos.y < yMax:
+        cameraPos = temp_camera_pos
+        cameraFront = temp_camera_front
+        cameraUp = temp_camera_up
 
 
 firstMouse = True
