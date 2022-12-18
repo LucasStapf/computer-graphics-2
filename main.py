@@ -134,6 +134,10 @@ monstro = obj.Object('monstro/monstro.obj', 'monstro/monstro.png')
 monstro.set_coordinates(0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, 1.0, 1.0, 1.0)
 monstro.set_light(0.1, 0.1, 0.9, ns_inc)
 
+lobo = obj.Object('lobo/lobo.obj', 'lobo/lobo.png')
+lobo.set_coordinates(0.0, 0.0, 1.0, 0.0, -15.0, -1.0, 0.0, 1.0, 1.0, 1.0)
+lobo.set_light(0.1, 0.1, 0.9, ns_inc)
+
 cadeira = obj.Object('cadeira/cadeira.obj', 'cadeira/cadeira.jpg')
 cadeira.set_coordinates(0.0, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0, 1.0, 1.0, 1.0)
 cadeira.set_light(0.1, 0.1, 0.9, ns_inc)
@@ -169,7 +173,8 @@ lista_objetos = obj.ObjList(
             monstro,
             cadeira,
             bau,
-            luz
+            luz,
+            lobo
             ]
         )
 
