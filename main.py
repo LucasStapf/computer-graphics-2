@@ -33,8 +33,11 @@ vertex_code = """
             out_normal = vec3( model *vec4(normals, 1.0));
         }
         """
+
+
 fragment_code = """
         // parametro com a cor da(s) fonte(s) de iluminacao
+
         uniform vec3 lightPos; // define coordenadas de posicao da luz
         vec3 lightColor = vec3(1.0, 1.0, 1.0);
 
@@ -53,12 +56,13 @@ fragment_code = """
         varying vec3 out_fragPos; // recebido do vertex shader
         uniform sampler2D samplerTexture;
 
+
+
         void main(){
 
             // calculando reflexao ambiente
             vec3 ambient = ka * lightColor;
 
-            // calculando reflexao difusa
             vec3 norm = normalize(out_normal); // normaliza vetores perpendiculares
             vec3 lightDir = normalize(lightPos - out_fragPos); // direcao da luz
             float diff = max(dot(norm, lightDir), 0.0); // verifica limite angular (entre 0 e 90)
@@ -68,6 +72,7 @@ fragment_code = """
             vec3 viewDir = normalize(viewPos - out_fragPos); // direcao do observador/camera
             vec3 reflectDir = normalize(reflect(-lightDir, norm)); // direcao da reflexao
             float spec = pow(max(dot(viewDir, reflectDir), 0.0), ns);
+
             vec3 specular = ks * spec * lightColor;
 
 
@@ -76,6 +81,8 @@ fragment_code = """
             gl_FragColor = result;
         }
         """
+
+
 program = glCreateProgram()
 vertex = glCreateShader(GL_VERTEX_SHADER)
 fragment = glCreateShader(GL_FRAGMENT_SHADER)
@@ -145,14 +152,14 @@ def rotacao_inc(self):
     if (self.t_y < 10.0):
         self.t_y += 0.005
 
-
 monstro.set_movement(rotacao_inc)
-luz.set_movement(rotacao_inc)
 
-def movimenta_luz(self, ang):
-    self.t_x = math.cos(ang)*0.5
-    self.t_y = math.sin(ang)*0.5
-    self.t_z = 3.0
+
+def movimenta_luz(self):
+    if (self.t_y < 10.0):
+        self.t_y += 0.005
+
+luz.set_movement(movimenta_luz)
 
 lista_objetos = obj.ObjList(
         [
@@ -328,7 +335,6 @@ while not glfw.window_should_close(window):
 
 
     lista_objetos.draw_objects(program)
-    ang += 0.005
 
     mat_view = view()
     loc_view = glGetUniformLocation(program, "view")
