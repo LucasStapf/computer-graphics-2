@@ -130,7 +130,7 @@ casa = obj.Object('casa/casa.obj', 'casa/casa.jpg')
 casa.set_coordinates(0.0, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0, 5.0, 5.0, 5.0)
 casa.set_light(0.1, 0.1, 0.9, ns_inc)
 
-monstro = obj.Object('monstro/monstro.obj', 'monstro/monstro.jpg')
+monstro = obj.Object('monstro/monstro.obj', 'monstro/monstro.png')
 monstro.set_coordinates(0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, 1.0, 1.0, 1.0)
 monstro.set_light(0.1, 0.1, 0.9, ns_inc)
 
