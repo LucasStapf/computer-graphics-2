@@ -130,10 +130,10 @@ terreno.set_light(0.1, 0.1, 0.9, ns_inc)
 
 casa = obj.Object('casa/casa.obj', 'casa/casa.jpg')
 casa.set_coordinates(0.0, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0, 5.0, 5.0, 5.0)
-casa.set_light(0.1, 0.1, 0.9, ns_inc)
+casa.set_light(1.0, 1.0, 1.0, ns_inc)
 
 monstro = obj.Object('monstro/monstro.obj', 'monstro/monstro.png')
-monstro.set_coordinates(0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, 1.0, 1.0, 1.0)
+monstro.set_coordinates(0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, 3.0, 3.0, 3.0)
 monstro.set_light(0.1, 0.1, 0.9, ns_inc)
 
 lobo = obj.Object('lobo/lobo.obj', 'lobo/lobo.png')
@@ -149,16 +149,19 @@ bau.set_coordinates(0.0, 0.0, 0.0, 1.0, -12.5, -1.0, 1.0, 2.5, 2.5, 2.5)
 bau.set_light(0.1, 0.1, 0.9, ns_inc)
 
 luz = obj.Object('luz/luz.obj', 'luz/luz.png')
-luz.set_coordinates(0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1)
+luz.set_coordinates(0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.1, 0.1, 0.1)
 luz.set_light(1.0, 1.0, 1.0, 1000.0)
 
+sol = obj.Object('luz/luz.obj', 'luz/luz.png')
+sol.set_coordinates(0.0, 0.0, 0.0, 1.0, 25.0, 25.0, 25.0, 4.0, 4.0, 4.0)
+sol.set_light(1.0, 1.0, 1.0, 1000.0)
 
 def rotacao_inc(self):
     self.angle += 0.1
     if (self.t_y < 10.0):
         self.t_y += 0.005
 
-#monstro.set_movement(rotacao_inc)
+monstro.set_movement(rotacao_inc)
 
 
 def movimenta_luz(self):
@@ -176,6 +179,7 @@ lista_objetos = obj.ObjList(
             cadeira,
             bau,
             luz,
+            sol,
             lobo
             ]
         )
@@ -221,7 +225,7 @@ glVertexAttribPointer(loc_texture_coord, 2, GL_FLOAT, False, stride, offset)
 yMin = 1.0
 yMax = 50.0
 
-cameraPos = glm.vec3(0.0, yMin, 1.0);
+cameraPos = glm.vec3(1.0, yMin, 1.0);
 cameraFront = glm.vec3(0.0, 0.0, -1.0);
 cameraUp = glm.vec3(0.0, 1.0, 0.0);
 
@@ -340,7 +344,7 @@ while not glfw.window_should_close(window):
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-    glClearColor(1.0, 1.0, 1.0, 1.0)
+    glClearColor(0.5, 0.5, 0.5, 1.0)
 
     if polygonal_mode==True:
         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE)
